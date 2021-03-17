@@ -18,15 +18,45 @@ def clean_phone_numbers(phone_number)
   end
 end
 
+def count_hours(array)
+  array.max_by { |a| array.count(a) }
+end
+
+def determine_day(array)
+  array.map! do |d|
+    case d
+    when 0 then "Sunday"
+    when 1 then "Monday"
+    when 2 then "Tuesday"
+    when 3 then "Wednesday"
+    when 4 then "Thursday"
+    when 5 then "Friday"
+    when 6 then "Saturday"
+    end
+  end
+  array.max_by { |a| array.count(a) }
+end
+
 contents = CSV.open(
   'event_attendees.csv',
   headers: true,
   header_converters: :symbol
 )
 
+hours = []
+days = []
+
 contents.each do |row|
   phone_number = row[:homephone]
   regdate = row[:regdate]
-  p regdate
-  puts DateTime.strptime(regdate, "%m/%d/%y %H:%M")
+  times = Time.strptime(regdate, "%m/%d/%y %H:%M")
+  hours << times.hour
+  days << times.wday
+  # puts clean_phone_numbers(phone_number)
 end
+
+puts "The prime hours are " + count_hours(hours).to_s + "."
+
+puts "The prime day is "
+
+puts determine_day(days)
